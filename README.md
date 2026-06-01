@@ -101,6 +101,13 @@ Localized documentation lives under `docs/en/` and `docs/zh/`. Use the links bel
 | Contribute code or docs | [`CONTRIBUTING.md`](CONTRIBUTING.md) | [`docs/en/development.md`](docs/en/development.md) / [`docs/zh/development.md`](docs/zh/development.md) → relevant architecture page |
 | Operate or secure a deployment | [`docs/en/usage.md`](docs/en/usage.md) / [`docs/zh/usage.md`](docs/zh/usage.md) | [`docs/en/security.md`](docs/en/security.md) / [`docs/zh/security.md`](docs/zh/security.md) → Gateway API |
 
+## Railway Deployment
+
+This fork is ready for Railway's **Deploy from GitHub repo** flow. Railway builds
+the checked-in Dockerfile, injects `PORT`, and validates `/health` via
+[`railway.json`](railway.json). See [`docs/en/railway.md`](docs/en/railway.md)
+for required variables and deployment steps.
+
 ## After This README
 
 - New here: jump to [`docs/en/README.md`](docs/en/README.md) or [`docs/zh/README.md`](docs/zh/README.md) and follow the guided reading order.

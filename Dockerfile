@@ -81,17 +81,21 @@ RUN apk add --no-cache ca-certificates curl git tzdata
 
 COPY --from=builder /app/zig-out/bin/nullclaw /usr/local/bin/nullclaw
 COPY --from=config /nullclaw-data /nullclaw-data
+COPY deploy/railway-entrypoint.sh /usr/local/bin/nullclaw-railway-entrypoint
+
+RUN chmod +x /usr/local/bin/nullclaw-railway-entrypoint
 
 ENV NULLCLAW_WORKSPACE=/nullclaw-data/workspace
 ENV NULLCLAW_HOME=/nullclaw-data
 ENV HOME=/nullclaw-data
 ENV SHELL=/bin/sh
 ENV NULLCLAW_GATEWAY_PORT=3000
+ENV NULLCLAW_GATEWAY_HOST=0.0.0.0
 
 WORKDIR /nullclaw-data
 EXPOSE 3000
-ENTRYPOINT ["nullclaw"]
-CMD ["gateway", "--port", "3000", "--host", "::"]
+ENTRYPOINT ["/usr/local/bin/nullclaw-railway-entrypoint"]
+CMD ["gateway"]
 
 # Optional autonomous mode (explicit opt-in):
 #   make build DOCKER_TARGET=release-root IMAGE=nullclaw:root
