@@ -19,6 +19,12 @@ mkdir -p "$NULLCLAW_HOME" "$NULLCLAW_WORKSPACE" 2>/dev/null || {
   echo "warning: unable to create persistent data directories; check volume permissions" >&2
 }
 
+if [ ! -f "$NULLCLAW_HOME/config.json" ] && [ -f /usr/share/nullclaw/config.json ]; then
+  cp /usr/share/nullclaw/config.json "$NULLCLAW_HOME/config.json" 2>/dev/null || {
+    echo "warning: unable to seed config.json; run nullclaw onboard to create one" >&2
+  }
+fi
+
 if [ "$#" -eq 0 ]; then
   set -- gateway
 fi

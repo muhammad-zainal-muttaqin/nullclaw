@@ -81,6 +81,7 @@ RUN apk add --no-cache ca-certificates curl git tzdata
 
 COPY --from=builder /app/zig-out/bin/nullclaw /usr/local/bin/nullclaw
 COPY --from=config /nullclaw-data /nullclaw-data
+COPY --from=config /nullclaw-data/config.json /usr/share/nullclaw/config.json
 COPY deploy/railway-entrypoint.sh /usr/local/bin/nullclaw-railway-entrypoint
 
 RUN chmod +x /usr/local/bin/nullclaw-railway-entrypoint

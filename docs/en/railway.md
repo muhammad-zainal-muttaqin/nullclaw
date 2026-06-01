@@ -37,6 +37,8 @@ NullClaw stores `config.json`, workspace files, session history, and local memor
 under that directory. If you mount the volume somewhere else, the entrypoint uses
 Railway's `RAILWAY_VOLUME_MOUNT_PATH` runtime variable and points
 `NULLCLAW_HOME`, `HOME`, and `NULLCLAW_WORKSPACE` at that volume automatically.
+When the volume is empty, the entrypoint seeds a starter `config.json` before
+the gateway starts.
 
 Railway mounts volumes as `root`. The default Docker image runs as UID `65534`,
 so set this Railway service variable when a volume is attached:
