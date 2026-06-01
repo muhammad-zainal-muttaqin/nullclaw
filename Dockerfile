@@ -22,8 +22,8 @@ RUN set -eu; \
 
 ARG TARGETARCH
 ARG VERSION=dev
-RUN --mount=type=cache,target=/root/.cache/zig \
-    --mount=type=cache,target=/app/.zig-cache \
+RUN --mount=type=cache,id=nullclaw-zig-cache-${TARGETARCH},target=/root/.cache/zig \
+    --mount=type=cache,id=nullclaw-zig-local-${TARGETARCH},target=/app/.zig-cache \
     set -eu; \
     arch="${TARGETARCH:-}"; \
     if [ -z "${arch}" ]; then \
