@@ -1,6 +1,24 @@
 #!/bin/sh
 set -eu
 
+data_root="${RAILWAY_VOLUME_MOUNT_PATH:-${NULLCLAW_DATA_DIR:-/nullclaw-data}}"
+
+if [ "${NULLCLAW_HOME:-/nullclaw-data}" = "/nullclaw-data" ]; then
+  export NULLCLAW_HOME="$data_root"
+fi
+
+if [ "${HOME:-/nullclaw-data}" = "/nullclaw-data" ]; then
+  export HOME="$data_root"
+fi
+
+if [ "${NULLCLAW_WORKSPACE:-/nullclaw-data/workspace}" = "/nullclaw-data/workspace" ]; then
+  export NULLCLAW_WORKSPACE="$data_root/workspace"
+fi
+
+mkdir -p "$NULLCLAW_HOME" "$NULLCLAW_WORKSPACE" 2>/dev/null || {
+  echo "warning: unable to create persistent data directories; check volume permissions" >&2
+}
+
 if [ "$#" -eq 0 ]; then
   set -- gateway
 fi

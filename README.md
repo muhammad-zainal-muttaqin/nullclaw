@@ -106,7 +106,7 @@ Localized documentation lives under `docs/en/` and `docs/zh/`. Use the links bel
 This fork is ready for Railway's **Deploy from GitHub repo** flow. Railway builds
 the checked-in Dockerfile, injects `PORT`, and validates `/health` via
 [`railway.json`](railway.json). See [`docs/en/railway.md`](docs/en/railway.md)
-for required variables and deployment steps.
+for required variables, persistent volume setup, and deployment steps.
 
 ## After This README
 
