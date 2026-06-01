@@ -25,6 +25,11 @@ Set at least one provider credential before using agent endpoints or channels:
 | `NULLCLAW_ALLOW_PUBLIC_BIND=true` | Optional; the image sets this automatically for Railway-style public binds |
 | `NULLCLAW_GATEWAY_HOST` | Optional override, defaults to `0.0.0.0` |
 | `NULLCLAW_GATEWAY_PORT` | Optional local fallback, defaults to `3000`; Railway uses `PORT` |
+| `NULLCLAW_TELEGRAM_BOT_TOKEN` | Optional Telegram bot token; alias: `TELEGRAM_BOT_TOKEN` |
+| `NULLCLAW_TELEGRAM_WEBHOOK_SECRET` | Optional Telegram webhook secret; alias: `TELEGRAM_WEBHOOK_SECRET` |
+| `NULLCLAW_TELEGRAM_ALLOW_FROM` | Optional Telegram user allowlist as a JSON array, for example `["123456789"]`; alias: `TELEGRAM_ALLOW_FROM` |
+| `NULLCLAW_TELEGRAM_GROUP_ALLOW_FROM` | Optional Telegram group sender allowlist as a JSON array; alias: `TELEGRAM_GROUP_ALLOW_FROM` |
+| `NULLCLAW_TELEGRAM_ACCOUNT_ID` | Optional Telegram account id, defaults to `main`; alias: `TELEGRAM_ACCOUNT_ID` |
 
 `PORT` is managed by Railway. Do not set it manually unless Railway asks you to.
 When `NULLCLAW_PRIMARY_MODEL` is set, the entrypoint persists it to
@@ -68,6 +73,41 @@ You can also set the full ref directly:
 ```text
 NULLCLAW_PRIMARY_MODEL=anthropic-custom:https://anthropic-compatible.example.com/claude-sonnet-4
 NULLCLAW_API_KEY=sk-ant-...
+```
+
+## Telegram webhook
+
+Railway runs the gateway, so Telegram should deliver updates to the gateway
+webhook endpoint instead of using local long polling.
+
+Set these Railway variables:
+
+```text
+NULLCLAW_TELEGRAM_BOT_TOKEN=123456:ABCDEF
+NULLCLAW_TELEGRAM_WEBHOOK_SECRET=replace-with-random-long-secret
+NULLCLAW_TELEGRAM_ALLOW_FROM=["123456789"]
+```
+
+`NULLCLAW_TELEGRAM_ALLOW_FROM` must be a JSON array. Use your numeric Telegram
+user id, not the bot token. If this allowlist is empty, Telegram messages are
+received but denied.
+
+After Railway gives the service a public domain, register the webhook with
+Telegram:
+
+```bash
+curl "https://api.telegram.org/bot$NULLCLAW_TELEGRAM_BOT_TOKEN/setWebhook" \
+  -d "url=https://<your-service>.up.railway.app/telegram" \
+  -d "secret_token=$NULLCLAW_TELEGRAM_WEBHOOK_SECRET"
+```
+
+For multiple bot accounts, set `NULLCLAW_TELEGRAM_ACCOUNT_ID` and register the
+webhook URL with `?account_id=<id>`:
+
+```bash
+curl "https://api.telegram.org/bot$NULLCLAW_TELEGRAM_BOT_TOKEN/setWebhook" \
+  -d "url=https://<your-service>.up.railway.app/telegram?account_id=main" \
+  -d "secret_token=$NULLCLAW_TELEGRAM_WEBHOOK_SECRET"
 ```
 
 ## Persistent storage

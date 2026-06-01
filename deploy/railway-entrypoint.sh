@@ -60,6 +60,37 @@ if [ -n "$provider" ] && [ -n "${NULLCLAW_MODEL:-}" ] && [ -z "${NULLCLAW_PRIMAR
   }
 fi
 
+telegram_account_id="${NULLCLAW_TELEGRAM_ACCOUNT_ID:-${TELEGRAM_ACCOUNT_ID:-main}}"
+telegram_base_path="channels.telegram.accounts.${telegram_account_id}"
+telegram_bot_token="${NULLCLAW_TELEGRAM_BOT_TOKEN:-${TELEGRAM_BOT_TOKEN:-}}"
+telegram_webhook_secret="${NULLCLAW_TELEGRAM_WEBHOOK_SECRET:-${TELEGRAM_WEBHOOK_SECRET:-}}"
+telegram_allow_from="${NULLCLAW_TELEGRAM_ALLOW_FROM:-${TELEGRAM_ALLOW_FROM:-}}"
+telegram_group_allow_from="${NULLCLAW_TELEGRAM_GROUP_ALLOW_FROM:-${TELEGRAM_GROUP_ALLOW_FROM:-}}"
+
+if [ -n "$telegram_bot_token" ]; then
+  nullclaw config set "${telegram_base_path}.bot_token" "$telegram_bot_token" >/dev/null 2>&1 || {
+    echo "warning: unable to apply Telegram bot token; check config.json" >&2
+  }
+fi
+
+if [ -n "$telegram_webhook_secret" ]; then
+  nullclaw config set "${telegram_base_path}.webhook_secret" "$telegram_webhook_secret" >/dev/null 2>&1 || {
+    echo "warning: unable to apply Telegram webhook secret; check config.json" >&2
+  }
+fi
+
+if [ -n "$telegram_allow_from" ]; then
+  nullclaw config set "${telegram_base_path}.allow_from" "$telegram_allow_from" >/dev/null 2>&1 || {
+    echo "warning: unable to apply Telegram allow_from; use a JSON array such as [\"123456789\"]" >&2
+  }
+fi
+
+if [ -n "$telegram_group_allow_from" ]; then
+  nullclaw config set "${telegram_base_path}.group_allow_from" "$telegram_group_allow_from" >/dev/null 2>&1 || {
+    echo "warning: unable to apply Telegram group_allow_from; use a JSON array such as [\"123456789\"]" >&2
+  }
+fi
+
 if [ "$#" -eq 0 ]; then
   set -- gateway
 fi
