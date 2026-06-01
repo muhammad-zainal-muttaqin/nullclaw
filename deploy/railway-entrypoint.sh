@@ -25,6 +25,12 @@ if [ ! -f "$NULLCLAW_HOME/config.json" ] && [ -f /usr/share/nullclaw/config.json
   }
 fi
 
+if [ -n "${NULLCLAW_PRIMARY_MODEL:-}" ]; then
+  nullclaw config set agents.defaults.model.primary "$NULLCLAW_PRIMARY_MODEL" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_PRIMARY_MODEL; check config.json" >&2
+  }
+fi
+
 if [ "$#" -eq 0 ]; then
   set -- gateway
 fi
