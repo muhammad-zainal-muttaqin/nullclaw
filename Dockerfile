@@ -22,9 +22,7 @@ RUN set -eu; \
 
 ARG TARGETARCH
 ARG VERSION=dev
-RUN --mount=type=cache,id=nullclaw-zig-cache-${TARGETARCH},target=/root/.cache/zig \
-    --mount=type=cache,id=nullclaw-zig-local-${TARGETARCH},target=/app/.zig-cache \
-    set -eu; \
+RUN set -eu; \
     arch="${TARGETARCH:-}"; \
     if [ -z "${arch}" ]; then \
       case "$(uname -m)" in \
