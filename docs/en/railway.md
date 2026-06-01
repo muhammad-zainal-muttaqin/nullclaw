@@ -17,7 +17,6 @@ Set at least one provider credential before using agent endpoints or channels:
 |---|---|
 | `OPENROUTER_API_KEY` | Recommended default provider credential |
 | `NULLCLAW_PRIMARY_MODEL` | Optional provider/model ref, for example `openrouter/anthropic/claude-sonnet-4` |
-| `RAILWAY_RUN_UID=0` | Required when using a Railway Volume with this non-root image |
 | `NULLCLAW_ALLOW_PUBLIC_BIND=true` | Optional; the image sets this automatically for Railway-style public binds |
 | `NULLCLAW_GATEWAY_HOST` | Optional override, defaults to `0.0.0.0` |
 | `NULLCLAW_GATEWAY_PORT` | Optional local fallback, defaults to `3000`; Railway uses `PORT` |
@@ -43,13 +42,8 @@ Railway's `RAILWAY_VOLUME_MOUNT_PATH` runtime variable and points
 `NULLCLAW_HOME`, `HOME`, and `NULLCLAW_WORKSPACE` at that volume automatically.
 When the volume is empty, the entrypoint seeds a starter `config.json` before
 the gateway starts.
-
-Railway mounts volumes as `root`. The default Docker image runs as UID `65534`,
-so set this Railway service variable when a volume is attached:
-
-```text
-RAILWAY_RUN_UID=0
-```
+The default Docker image runs as root so it can write to Railway's root-owned
+volume mount without additional Railway variables.
 
 ## Deploy
 
@@ -57,7 +51,7 @@ RAILWAY_RUN_UID=0
 2. Choose **Deploy from GitHub repo**.
 3. Select this repository.
 4. Add a Railway Volume mounted at `/nullclaw-data`.
-5. Add provider credentials and `RAILWAY_RUN_UID=0` in Railway variables.
+5. Add provider credentials in Railway variables.
 6. Wait for `/health` to pass.
 
 After deploy, use Railway's generated domain for gateway endpoints such as

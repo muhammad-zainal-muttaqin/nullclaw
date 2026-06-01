@@ -96,11 +96,11 @@ EXPOSE 3000
 ENTRYPOINT ["/usr/local/bin/nullclaw-railway-entrypoint"]
 CMD ["gateway"]
 
-# Optional autonomous mode (explicit opt-in):
-#   make build DOCKER_TARGET=release-root IMAGE=nullclaw:root
+# Root runtime target. Railway volumes are mounted root-owned, so the default
+# Docker target must be able to seed config and persist runtime state.
 FROM release-base AS release-root
 USER 0:0
 
-# Safe default image (used when no --target is provided)
+# Default image (used when no --target is provided)
 FROM release-base AS release
-USER 65534:65534
+USER 0:0
