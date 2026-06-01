@@ -15,6 +15,12 @@ if [ "${NULLCLAW_WORKSPACE:-/nullclaw-data/workspace}" = "/nullclaw-data/workspa
   export NULLCLAW_WORKSPACE="$data_root/workspace"
 fi
 
+export NULLCLAW_ALLOW_PUBLIC_BIND="${NULLCLAW_ALLOW_PUBLIC_BIND:-true}"
+
+if [ -n "${PORT:-}" ] && [ -z "${NULLCLAW_GATEWAY_PORT:-}" ]; then
+  export NULLCLAW_GATEWAY_PORT="$PORT"
+fi
+
 mkdir -p "$NULLCLAW_HOME" "$NULLCLAW_WORKSPACE" 2>/dev/null || {
   echo "warning: unable to create persistent data directories; check volume permissions" >&2
 }

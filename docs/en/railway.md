@@ -18,6 +18,7 @@ Set at least one provider credential before using agent endpoints or channels:
 | `OPENROUTER_API_KEY` | Recommended default provider credential |
 | `NULLCLAW_PRIMARY_MODEL` | Optional provider/model ref, for example `openrouter/anthropic/claude-sonnet-4` |
 | `RAILWAY_RUN_UID=0` | Required when using a Railway Volume with this non-root image |
+| `NULLCLAW_ALLOW_PUBLIC_BIND=true` | Optional; the image sets this automatically for Railway-style public binds |
 | `NULLCLAW_GATEWAY_HOST` | Optional override, defaults to `0.0.0.0` |
 | `NULLCLAW_GATEWAY_PORT` | Optional local fallback, defaults to `3000`; Railway uses `PORT` |
 
