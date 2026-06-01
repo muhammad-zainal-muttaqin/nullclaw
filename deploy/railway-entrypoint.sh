@@ -37,6 +37,29 @@ if [ -n "${NULLCLAW_PRIMARY_MODEL:-}" ]; then
   }
 fi
 
+provider="${NULLCLAW_PROVIDER:-}"
+if [ -z "$provider" ] && [ -n "${NULLCLAW_BASE_URL:-}" ]; then
+  compat="$(printf '%s' "${NULLCLAW_COMPAT:-${NULLCLAW_PROVIDER_TYPE:-openai}}" | tr '[:upper:]' '[:lower:]')"
+  case "$compat" in
+    anthropic|anthropic-compatible|anthropic_custom|anthropic-custom|claude)
+      provider="anthropic-custom:${NULLCLAW_BASE_URL}"
+      ;;
+    openai|openai-compatible|openai_custom|openai-custom|compatible|"")
+      provider="custom:${NULLCLAW_BASE_URL}"
+      ;;
+    *)
+      echo "warning: unknown NULLCLAW_COMPAT value; defaulting NULLCLAW_BASE_URL to OpenAI-compatible custom provider" >&2
+      provider="custom:${NULLCLAW_BASE_URL}"
+      ;;
+  esac
+fi
+
+if [ -n "$provider" ] && [ -n "${NULLCLAW_MODEL:-}" ] && [ -z "${NULLCLAW_PRIMARY_MODEL:-}" ]; then
+  nullclaw config set agents.defaults.model.primary "${provider}/${NULLCLAW_MODEL}" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_PROVIDER/NULLCLAW_MODEL; check config.json" >&2
+  }
+fi
+
 if [ "$#" -eq 0 ]; then
   set -- gateway
 fi

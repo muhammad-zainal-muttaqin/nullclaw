@@ -17,6 +17,11 @@ Set at least one provider credential before using agent endpoints or channels:
 |---|---|
 | `OPENROUTER_API_KEY` | Recommended default provider credential |
 | `NULLCLAW_PRIMARY_MODEL` | Optional provider/model ref, for example `openrouter/anthropic/claude-sonnet-4` |
+| `NULLCLAW_PROVIDER` | Optional provider id, for example `openai`, `anthropic`, `groq`, `custom:https://api.example.com/v1`, or `anthropic-custom:https://api.example.com` |
+| `NULLCLAW_BASE_URL` | Optional compatible-provider base URL; used when `NULLCLAW_PROVIDER` is omitted |
+| `NULLCLAW_COMPAT` | Optional compatibility type for `NULLCLAW_BASE_URL`: `openai` (default) or `anthropic` |
+| `NULLCLAW_API_KEY` | Optional generic provider credential for custom compatible providers |
+| `NULLCLAW_MODEL` | Optional model name appended to `NULLCLAW_PROVIDER` or generated custom provider when `NULLCLAW_PRIMARY_MODEL` is omitted |
 | `NULLCLAW_ALLOW_PUBLIC_BIND=true` | Optional; the image sets this automatically for Railway-style public binds |
 | `NULLCLAW_GATEWAY_HOST` | Optional override, defaults to `0.0.0.0` |
 | `NULLCLAW_GATEWAY_PORT` | Optional local fallback, defaults to `3000`; Railway uses `PORT` |
@@ -24,6 +29,46 @@ Set at least one provider credential before using agent endpoints or channels:
 `PORT` is managed by Railway. Do not set it manually unless Railway asks you to.
 When `NULLCLAW_PRIMARY_MODEL` is set, the entrypoint persists it to
 `agents.defaults.model.primary` before starting the gateway.
+For custom compatible providers, set `NULLCLAW_BASE_URL`, `NULLCLAW_API_KEY`,
+`NULLCLAW_MODEL`, and optionally `NULLCLAW_COMPAT`; the entrypoint writes the
+matching primary model reference while the runtime reads the API key from env.
+
+### OpenAI-compatible endpoint
+
+```text
+NULLCLAW_COMPAT=openai
+NULLCLAW_BASE_URL=https://api.example.com/v1
+NULLCLAW_MODEL=qwen/qwen3-32b
+NULLCLAW_API_KEY=sk-...
+```
+
+This becomes:
+
+```text
+custom:https://api.example.com/v1/qwen/qwen3-32b
+```
+
+### Anthropic-compatible endpoint
+
+```text
+NULLCLAW_COMPAT=anthropic
+NULLCLAW_BASE_URL=https://anthropic-compatible.example.com
+NULLCLAW_MODEL=claude-sonnet-4
+NULLCLAW_API_KEY=sk-ant-...
+```
+
+This becomes:
+
+```text
+anthropic-custom:https://anthropic-compatible.example.com/claude-sonnet-4
+```
+
+You can also set the full ref directly:
+
+```text
+NULLCLAW_PRIMARY_MODEL=anthropic-custom:https://anthropic-compatible.example.com/claude-sonnet-4
+NULLCLAW_API_KEY=sk-ant-...
+```
 
 ## Persistent storage
 
