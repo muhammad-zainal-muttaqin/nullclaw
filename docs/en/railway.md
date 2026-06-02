@@ -29,7 +29,14 @@ Set at least one provider credential before using agent endpoints or channels:
 | `NULLCLAW_TELEGRAM_WEBHOOK_SECRET` | Optional Telegram webhook secret; alias: `TELEGRAM_WEBHOOK_SECRET` |
 | `NULLCLAW_TELEGRAM_ALLOW_FROM` | Optional Telegram user allowlist as a JSON array, for example `["123456789"]`; alias: `TELEGRAM_ALLOW_FROM` |
 | `NULLCLAW_TELEGRAM_GROUP_ALLOW_FROM` | Optional Telegram group sender allowlist as a JSON array; alias: `TELEGRAM_GROUP_ALLOW_FROM` |
+| `NULLCLAW_TELEGRAM_REQUIRE_MENTION` | Optional Telegram group guard, `true` or `false`; alias: `TELEGRAM_REQUIRE_MENTION` |
+| `NULLCLAW_TELEGRAM_GROUP_POLICY` | Optional Telegram group policy; alias: `TELEGRAM_GROUP_POLICY` |
 | `NULLCLAW_TELEGRAM_ACCOUNT_ID` | Optional Telegram account id, defaults to `main`; alias: `TELEGRAM_ACCOUNT_ID` |
+| `NULLCLAW_AUTONOMY_LEVEL` | Optional autonomy level, for example `supervised` or `full` |
+| `NULLCLAW_ALLOWED_COMMANDS` | Optional shell command allowlist as a JSON array, for example `["grep","which","cat","sed","ls"]` |
+| `NULLCLAW_ALLOWED_PATHS` | Optional path allowlist as a JSON array, for example `["/nullclaw-data"]` |
+| `NULLCLAW_BLOCK_MEDIUM_RISK_COMMANDS` | Optional boolean for medium-risk shell commands |
+| `NULLCLAW_REQUIRE_APPROVAL_FOR_MEDIUM_RISK` | Optional boolean for medium-risk approvals |
 
 `PORT` is managed by Railway. Do not set it manually unless Railway asks you to.
 When `NULLCLAW_PRIMARY_MODEL` is set, the entrypoint persists it to
@@ -86,11 +93,15 @@ Set these Railway variables:
 NULLCLAW_TELEGRAM_BOT_TOKEN=123456:ABCDEF
 NULLCLAW_TELEGRAM_WEBHOOK_SECRET=replace-with-random-long-secret
 NULLCLAW_TELEGRAM_ALLOW_FROM=["123456789"]
+NULLCLAW_TELEGRAM_REQUIRE_MENTION=true
 ```
 
 `NULLCLAW_TELEGRAM_ALLOW_FROM` must be a JSON array. Use your numeric Telegram
 user id, not the bot token. If this allowlist is empty, Telegram messages are
 received but denied.
+`NULLCLAW_TELEGRAM_WEBHOOK_SECRET` must be 16-128 printable characters with no
+spaces. `NULLCLAW_TELEGRAM_REQUIRE_MENTION=true` keeps group chats quiet unless
+the bot is mentioned or replied to; direct messages still work.
 
 After Railway gives the service a public domain, register the webhook with
 Telegram:
@@ -109,6 +120,31 @@ curl "https://api.telegram.org/bot$NULLCLAW_TELEGRAM_BOT_TOKEN/setWebhook" \
   -d "url=https://<your-service>.up.railway.app/telegram?account_id=main" \
   -d "secret_token=$NULLCLAW_TELEGRAM_WEBHOOK_SECRET"
 ```
+
+## Agent shell permissions
+
+If the agent needs to inspect and edit its own Railway volume config, start with
+a narrow shell allowlist:
+
+```text
+NULLCLAW_AUTONOMY_LEVEL=full
+NULLCLAW_ALLOWED_COMMANDS=["grep","which","cat","sed","ls","find","pwd"]
+NULLCLAW_ALLOWED_PATHS=["/nullclaw-data"]
+NULLCLAW_BLOCK_MEDIUM_RISK_COMMANDS=true
+```
+
+This allows basic inspection commands without opening every shell command. For
+controlled private deployments only, you can widen it:
+
+```text
+NULLCLAW_ALLOWED_COMMANDS=["*"]
+NULLCLAW_ALLOWED_PATHS=["/nullclaw-data"]
+NULLCLAW_BLOCK_MEDIUM_RISK_COMMANDS=false
+NULLCLAW_REQUIRE_APPROVAL_FOR_MEDIUM_RISK=false
+```
+
+Avoid `NULLCLAW_ALLOWED_PATHS=["*"]` on public bots unless you intentionally
+want the agent to access the whole container filesystem.
 
 ## Persistent storage
 

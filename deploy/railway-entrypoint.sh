@@ -66,6 +66,8 @@ telegram_bot_token="${NULLCLAW_TELEGRAM_BOT_TOKEN:-${TELEGRAM_BOT_TOKEN:-}}"
 telegram_webhook_secret="${NULLCLAW_TELEGRAM_WEBHOOK_SECRET:-${TELEGRAM_WEBHOOK_SECRET:-}}"
 telegram_allow_from="${NULLCLAW_TELEGRAM_ALLOW_FROM:-${TELEGRAM_ALLOW_FROM:-}}"
 telegram_group_allow_from="${NULLCLAW_TELEGRAM_GROUP_ALLOW_FROM:-${TELEGRAM_GROUP_ALLOW_FROM:-}}"
+telegram_require_mention="${NULLCLAW_TELEGRAM_REQUIRE_MENTION:-${TELEGRAM_REQUIRE_MENTION:-}}"
+telegram_group_policy="${NULLCLAW_TELEGRAM_GROUP_POLICY:-${TELEGRAM_GROUP_POLICY:-}}"
 
 if [ -n "$telegram_bot_token" ]; then
   nullclaw config set "${telegram_base_path}.bot_token" "$telegram_bot_token" >/dev/null 2>&1 || {
@@ -88,6 +90,48 @@ fi
 if [ -n "$telegram_group_allow_from" ]; then
   nullclaw config set "${telegram_base_path}.group_allow_from" "$telegram_group_allow_from" >/dev/null 2>&1 || {
     echo "warning: unable to apply Telegram group_allow_from; use a JSON array such as [\"123456789\"]" >&2
+  }
+fi
+
+if [ -n "$telegram_require_mention" ]; then
+  nullclaw config set "${telegram_base_path}.require_mention" "$telegram_require_mention" >/dev/null 2>&1 || {
+    echo "warning: unable to apply Telegram require_mention; use true or false" >&2
+  }
+fi
+
+if [ -n "$telegram_group_policy" ]; then
+  nullclaw config set "${telegram_base_path}.group_policy" "$telegram_group_policy" >/dev/null 2>&1 || {
+    echo "warning: unable to apply Telegram group_policy; check config.json" >&2
+  }
+fi
+
+if [ -n "${NULLCLAW_AUTONOMY_LEVEL:-}" ]; then
+  nullclaw config set autonomy.level "$NULLCLAW_AUTONOMY_LEVEL" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_AUTONOMY_LEVEL; check config.json" >&2
+  }
+fi
+
+if [ -n "${NULLCLAW_ALLOWED_COMMANDS:-}" ]; then
+  nullclaw config set autonomy.allowed_commands "$NULLCLAW_ALLOWED_COMMANDS" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_ALLOWED_COMMANDS; use a JSON array such as [\"grep\",\"which\"]" >&2
+  }
+fi
+
+if [ -n "${NULLCLAW_ALLOWED_PATHS:-}" ]; then
+  nullclaw config set autonomy.allowed_paths "$NULLCLAW_ALLOWED_PATHS" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_ALLOWED_PATHS; use a JSON array such as [\"/nullclaw-data\"]" >&2
+  }
+fi
+
+if [ -n "${NULLCLAW_BLOCK_MEDIUM_RISK_COMMANDS:-}" ]; then
+  nullclaw config set autonomy.block_medium_risk_commands "$NULLCLAW_BLOCK_MEDIUM_RISK_COMMANDS" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_BLOCK_MEDIUM_RISK_COMMANDS; use true or false" >&2
+  }
+fi
+
+if [ -n "${NULLCLAW_REQUIRE_APPROVAL_FOR_MEDIUM_RISK:-}" ]; then
+  nullclaw config set autonomy.require_approval_for_medium_risk "$NULLCLAW_REQUIRE_APPROVAL_FOR_MEDIUM_RISK" >/dev/null 2>&1 || {
+    echo "warning: unable to apply NULLCLAW_REQUIRE_APPROVAL_FOR_MEDIUM_RISK; use true or false" >&2
   }
 fi
 
